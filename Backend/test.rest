@@ -1,0 +1,99 @@
+POST http://127.0.0.1:8000/auth/register/
+Content-Type: application/json
+
+{
+    "username": "user4",
+    "email": "1alxch@bltiwd.com",
+    "password":"ayush@1234",
+    "confirm_password":"ayush@1234"
+}
+
+###
+
+POST http://127.0.0.1:8000/auth/verify-otp/
+Content-Type: application/json
+
+{
+    "email": "1alxch@bltiwd.com",
+    "otp": "836066"
+
+}
+
+###
+
+POST http://127.0.0.1:8000/auth/resend-otp/
+Content-Type: application/json
+
+{
+    "email": "7yzww@dygovil.com"
+
+}
+
+
+###
+
+
+
+POST http://127.0.0.1:8000/auth/login/
+Content-Type: application/json
+
+{
+    "username":"user4",
+    "password":"ayush@1234"
+}
+
+###
+
+POST http://127.0.0.1:8000/healthcare/form/submit/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQyODI2MTM0LCJpYXQiOjE3NDI3Mzk3MzQsImp0aSI6IjIzYmY1YzFlYzdlNzQ2MGViOTIzODgxZjY4MjViMWE2IiwidXNlcl9pZCI6NX0.BNW59zsqa3V_RgSBVEq8O_tqna_ILHXbKVcoxYeslEY
+
+{
+  "user": "user3",
+  "name": "User3",
+  "age": 40,
+  "gender": "Female",
+  "contact_details": "9876543110",
+  "chronic_conditions": "Diabetes",
+  "past_surgeries": "Appendix removal",
+  "allergies": "Peanuts",
+  "medications": "Metformin",
+  "symptoms": "Fever and headache",
+  "symptom_severity": "Moderate",
+  "symptom_duration": "1-3 days",
+  "mental_health_stress": true,
+  "mental_health_anxiety": false,
+  "mental_health_depression": false,
+  "vaccination_history": "Covid-19, Flu",
+  "accessibility_needs": "Wheelchair access",
+  "pregnancy_status": "Not Applicable",
+  "emergency_contact": {
+    "name": "Hazel Peanut",
+    "relationship": "Sister",
+    "number": "4376543211"
+  },
+  "health_insurance_provider": "XYZ Insurance",
+  "health_insurance_policy": "AB125356",
+  "preferred_language": "English",
+  "research_participation": true
+}
+
+###
+
+GET http://127.0.0.1:8000/healthcare/form/me/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQyODI1MzcwLCJpYXQiOjE3NDI3Mzg5NzAsImp0aSI6IjM3OGFiMDY4OTA3YzQ3NzlhNzFjMjE4MGE4ZjI0NzkwIiwidXNlcl9pZCI6M30.TT3G2wRzISN8H5Sn5y9pTOHGB-ftzx61ihr4U9F6-CM
+
+
+###
+
+PATCH http://127.0.0.1:8000/healthcare/form/me/update/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQyODI2MTM0LCJpYXQiOjE3NDI3Mzk3MzQsImp0aSI6IjIzYmY1YzFlYzdlNzQ2MGViOTIzODgxZjY4MjViMWE2IiwidXNlcl9pZCI6NX0.BNW59zsqa3V_RgSBVEq8O_tqna_ILHXbKVcoxYeslEY
+
+{
+    "age":44,
+    "gender": "Other"
+}
+
+###
