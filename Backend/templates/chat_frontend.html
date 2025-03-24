@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* General Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #e6e6e6;
+        }
+
+        .chat-container {
+            width: 90%;
+            max-width: 1000px;
+            height: 90vh;
+            background: rgba(26, 32, 58, 0.9);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-header {
+            background: linear-gradient(90deg, #3b3b5f 0%, #2b2b45 100%);
+            color: #fff;
+            text-align: center;
+            padding: 18px;
+            font-size: 24px;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-header i {
+            margin-right: 10px;
+            color: #4b8dff;
+        }
+
+        .chat-box {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            font-size: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background-color: rgba(21, 25, 40, 0.8);
+        }
+
+        .chat-box::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-box::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        .chat-box::-webkit-scrollbar-thumb {
+            background: rgba(75, 141, 255, 0.5);
+            border-radius: 4px;
+        }
+
+        .message {
+            padding: 14px 18px;
+            border-radius: 12px;
+            max-width: 80%;
+            font-size: 16px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #4b8dff 0%, #3a7de0 100%);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 0;
+        }
+
+        .ai-message {
+            background: linear-gradient(135deg, #3d3d5c 0%, #323250 100%);
+            color: white;
+            align-self: flex-start;
+            border-bottom-left-radius: 0;
+        }
+
+        .message strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .user-message strong {
+            text-align: right;
+        }
+
+        .loading-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px;
+            background: rgba(61, 61, 92, 0.5);
+            border-radius: 12px;
+            align-self: flex-start;
+            margin-top: 8px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background-color: white;
+            border-radius: 50%;
+            opacity: 0.7;
+        }
+
+        .dot:nth-child(1) {
+            animation: bounce 1.4s infinite 0s;
+        }
+        .dot:nth-child(2) {
+            animation: bounce 1.4s infinite 0.2s;
+        }
+        .dot:nth-child(3) {
+            animation: bounce 1.4s infinite 0.4s;
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-8px); }
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 20px;
+            background: linear-gradient(90deg, #2a2a40 0%, #222236 100%);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 14px 18px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .chat-input input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .chat-input input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .chat-input button {
+            background: linear-gradient(135deg, #4b8dff 0%, #3a7de0 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-input button:hover {
+            background: linear-gradient(135deg, #3a7de0 0%, #2a6dd0 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .chat-input button:active {
+            transform: translateY(0);
+        }
+
+        /* Markdown Styling */
+        .message p {
+            margin-bottom: 10px;
+        }
+
+        .message p:last-child {
+            margin-bottom: 0;
+        }
+
+        .message code {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .message pre {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        .message pre code {
+            background: transparent;
+            padding: 0;
+        }
+
+        .message ul, .message ol {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+
+        .message h1, .message h2, .message h3, .message h4 {
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <i class="fas fa-robot"></i>AI Chat Assistant
+        </div>
+        <div class="chat-box" id="chat-box"></div>
+        <div class="chat-input">
+            <input type="text" id="message-input" placeholder="Type your message..." autocomplete="off">
+            <button onclick="sendMessage()" id="send-button">
+                <i class="fas fa-paper-plane"></i>
+                Send
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById("chat-box");
+        const messageInput = document.getElementById("message-input");
+        const sendButton = document.getElementById("send-button");
+        const token = localStorage.getItem("access_token");
+        const chatSocket = new WebSocket(`ws://localhost:8000/ws/chat/?token=${encodeURIComponent(token)}`);
+        
+        // Track the current AI response state
+        let currentAIMessageDiv = null;
+        let fullAIMessage = "";
+        let visibleText = "";
+        let isTyping = false;
+        let typeQueue = [];
+        let loadingIndicator = null;
+        let waitingForResponse = false;
+        let currentMessageId = 0;
+        let activeMessageId = null;
+        
+        chatSocket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            
+            // Remove loading indicator if it exists
+            if (loadingIndicator) {
+                loadingIndicator.remove();
+                loadingIndicator = null;
+                waitingForResponse = false;
+            }
+            
+            // Handle loading previous messages
+            if (data.previous_messages) {
+                data.previous_messages.reverse().forEach(msg => {
+                    appendMessage("user-message", "You", msg.message);
+                    appendMessage("ai-message", "AI", msg.response);
+                });
+                return;
+            }
+            
+            // Handle new message from server
+            if (data.message_id !== undefined) {
+                // If this is a new conversation or a different message ID than what we're currently handling
+                if (activeMessageId !== data.message_id) {
+                    // Reset state for the new message
+                    activeMessageId = data.message_id;
+                    currentAIMessageDiv = null;
+                    fullAIMessage = "";
+                    visibleText = "";
+                    typeQueue = [];
+                }
+            }
+            
+            // Create message div for the first chunk if needed
+            if (!currentAIMessageDiv) {
+                currentAIMessageDiv = document.createElement("div");
+                currentAIMessageDiv.classList.add("message", "ai-message");
+                currentAIMessageDiv.innerHTML = `<strong>AI:</strong> `;
+                chatBox.appendChild(currentAIMessageDiv);
+                fullAIMessage = "";
+                visibleText = "";
+                isTyping = false;
+            }
+            
+            // Add new text to the full message
+            if (data.message) {
+                fullAIMessage += data.message;
+                
+                // Queue the new text for typing animation
+                typeQueue.push(data.message);
+                
+                // Start typing animation if not already in progress
+                if (!isTyping) {
+                    typeNextChunk();
+                }
+            }
+        };
+        
+        function typeNextChunk() {
+            if (typeQueue.length === 0) {
+                isTyping = false;
+                return;
+            }
+            
+            isTyping = true;
+            const chunk = typeQueue.shift();
+            let chunkIndex = 0;
+            
+            function typeCharacter() {
+                if (chunkIndex < chunk.length) {
+                    // Add one character at a time
+                    visibleText += chunk[chunkIndex];
+                    currentAIMessageDiv.innerHTML = `<strong>AI:</strong> ${marked.parse(visibleText)}`;
+                    chunkIndex++;
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                    setTimeout(typeCharacter, 8); // Slightly slower typing speed
+                } else {
+                    // This chunk is done, check if more chunks are queued
+                    if (typeQueue.length > 0) {
+                        typeNextChunk();
+                    } else {
+                        isTyping = false;
+                    }
+                }
+            }
+            
+            typeCharacter();
+        }
+    
+        chatSocket.onerror = function(error) {
+            console.error("WebSocket Error:", error);
+        };
+        
+        chatSocket.onopen = function() {
+            console.log("WebSocket connection established");
+            // Enable button when connection is established
+            sendButton.disabled = false;
+        };
+        
+        chatSocket.onclose = function() {
+            console.log("WebSocket connection closed");
+            appendMessage("ai-message", "System", "Connection lost. Please refresh the page to reconnect.");
+            // Disable button when connection is lost
+            sendButton.disabled = true;
+        };
+    
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (message === "" || waitingForResponse) return;
+            
+            // Increment message ID to identify responses
+            currentMessageId++;
+            
+            // Reset the active message ID to prevent conflicts
+            activeMessageId = null;
+            
+            // Disable button while waiting for response
+            sendButton.disabled = true;
+            
+            appendMessage("user-message", "You", message);
+            chatSocket.send(JSON.stringify({ 
+                message: message,
+                message_id: currentMessageId
+            }));
+            messageInput.value = "";
+            
+            // Show loading indicator
+            showLoadingIndicator();
+            
+            // Re-enable button after a short delay
+            setTimeout(() => {
+                sendButton.disabled = false;
+            }, 500);
+        }
+        
+        function showLoadingIndicator() {
+            if (!waitingForResponse) {
+                waitingForResponse = true;
+                loadingIndicator = document.createElement("div");
+                loadingIndicator.className = "loading-indicator";
+                loadingIndicator.innerHTML = `
+                    <span>AI is thinking</span>
+                    <div class="typing-dots">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                `;
+                chatBox.appendChild(loadingIndicator);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+    
+        function appendMessage(className, sender, text) {
+            const messageDiv = document.createElement("div");
+            messageDiv.classList.add("message", className);
+            messageDiv.innerHTML = `<strong>${sender}:</strong> ${marked.parse(text)}`;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    
+        messageInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter" && !sendButton.disabled) {
+                sendMessage();
+            }
+        });
+        
+        // Focus input field when page loads
+        window.onload = function() {
+            messageInput.focus();
+            // Disable button until WebSocket connects
+            sendButton.disabled = true;
+        };
+    </script>
+</body>
+</html>
+

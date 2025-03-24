@@ -1,0 +1,19 @@
+1. superuser is_active = False hai due to custom user tabhi admin panel pe login ni ho rha 
+2. resend otp timeout ---- DONE
+3. google auth
+4. try except everywhere
+
+websocket streaming
+readme.md file generate karna hai 
+
+
+workflow of ai model usage --
+
+🔄 Complete Flow (Step-by-Step)
+
+1️⃣ User sends message ➝ WebSocket (Django Channels)
+2️⃣ Backend forwards it to Redis ➝ Stored in Redis (Pub/Sub)
+3️⃣ AI worker listens to Redis ➝ Calls OpenAI API
+4️⃣ AI response is stored in Redis ➝ Cached for future use
+5️⃣ Backend retrieves AI response ➝ Sends via WebSocket
+6️⃣ User receives AI-generated reply
