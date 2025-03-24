@@ -8,6 +8,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from users.serializers import CustomUserRegistrationSerializer
 from users.utils import generate_otp, store_otp, get_stored_otp, delete_otp, send_otp_email
+import time
+from django.core.cache import cache
 
 class RegistrationView(APIView):
     def post(self, request):
@@ -42,11 +44,19 @@ class VerifyOTPView(APIView):
     def post(self, request):
         email = request.data.get("email")
         otp_entered = request.data.get("otp")
+        otp_data = get_stored_otp(email)  # Fetch stored OTP dict
 
-        otp_stored = get_stored_otp(email)
-
-        if not otp_stored:
+        if not otp_data:
             return Response({"error": "OTP expired or invalid. Please request a new one."}, status=status.HTTP_400_BAD_REQUEST)
+
+        otp_stored = otp_data["otp"]  # Extract OTP from the dictionary
+
+        # otp_stored = get_stored_otp(email)
+        # print(f"DEBUG: OTP Entered: {otp_entered} (type: {type(otp_entered)})")
+        # print(f"DEBUG: OTP Stored: {otp_stored} (type: {type(otp_stored)})")
+
+        # if not otp_stored:
+        #     return Response({"error": "OTP expired or invalid. Please request a new one."}, status=status.HTTP_400_BAD_REQUEST)
 
         if otp_stored == otp_entered:
             try:
@@ -70,6 +80,21 @@ class ResendOTPView(APIView):
 
         try:
             user = CustomUser.objects.get(email=email, is_active=False)
+
+            # Retrieve last OTP info
+            otp_data = cache.get(f"otp_{email}")
+
+            if otp_data:
+                last_otp_time = otp_data["timestamp"]
+                current_time = time.time()
+
+                # Check if 90 seconds have passed
+                if current_time - last_otp_time < 90:
+                    remaining_time = 90 - (current_time - last_otp_time)
+                    return Response(
+                        {"error": f"Please wait {int(remaining_time)} seconds before requesting a new OTP."},
+                        status=status.HTTP_429_TOO_MANY_REQUESTS
+                    )
 
             # Generate and store new OTP
             otp = generate_otp()
@@ -109,3 +134,20 @@ class LogoutView(APIView):
             return Response({'message': "Invalid Token"}, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+
+
+# from dj_rest_auth.registration.views import SocialLoginView
+# from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+# from rest_framework_simplejwt.tokens import RefreshToken
+
+# class GoogleLogin(SocialLoginView):
+#     adapter_class = GoogleOAuth2Adapter
+
+#     def get_response(self):
+#         response = super().get_response()
+#         user = self.user
+#         refresh = RefreshToken.for_user(user)
+#         response.data['access_token'] = str(refresh.access_token)
+#         response.data['refresh_token'] = str(refresh)
+#         return response
