@@ -17,3 +17,55 @@ workflow of ai model usage --
 4️⃣ AI response is stored in Redis ➝ Cached for future use
 5️⃣ Backend retrieves AI response ➝ Sends via WebSocket
 6️⃣ User receives AI-generated reply
+
+
+
+---------------------------------------------------------------------------------------------------
+
+NEON POSTGRES SETTTINGS
+
+import dj_database_url
+import os
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default="postgres://your_user:your_password@your_host:your_port/your_database",
+        conn_max_age=600,
+        ssl_require=True  # Ensures secure connection
+    )
+}
+
+
+DUMP ALL DATA TO data.json
+
+python manage.py dumpdata --exclude auth.permission --exclude contenttypes > data.json
+
+
+use .env ---
+
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.getenv("DATABASE_URL"),
+        conn_max_age=600,
+        ssl_require=True
+    )
+}
+
+
+Remove migrations ---
+
+Get-ChildItem -Path . -Recurse -Filter "*.py" | Where-Object { $_.FullName -match "migrations" -and $_.Name -ne "__init__.py" } | Remove-Item -Force
+Get-ChildItem -Path . -Recurse -Filter "*.pyc" | Remove-Item -Force
+
+
+python manage.py makemigrations
+python manage.py migrate
+
+
+python manage.py loaddata data.json
+
+
+
+
+

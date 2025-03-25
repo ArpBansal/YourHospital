@@ -2,8 +2,8 @@ POST http://127.0.0.1:8000/auth/register/
 Content-Type: application/json
 
 {
-    "username": "user6",
-    "email": "nvl0t@vvatxiy.com",
+    "username": "user3",
+    "email": "ggnx7@daouse.com",
     "password":"ayush@1234",
     "confirm_password":"ayush@1234"
 }
@@ -14,8 +14,8 @@ POST http://127.0.0.1:8000/auth/verify-otp/
 Content-Type: application/json
 
 {
-    "email": "nvl0t@vvatxiy.com",
-    "otp": "260365"
+    "email": "ggnx7@daouse.com",
+    "otp": "165940"
 
 }
 
@@ -38,7 +38,7 @@ POST http://127.0.0.1:8000/auth/login/
 Content-Type: application/json
 
 {
-    "username":"user6",
+    "username":"user3",
     "password":"ayush@1234"
 }
 
@@ -46,13 +46,13 @@ Content-Type: application/json
 
 POST http://127.0.0.1:8000/healthcare/form/submit/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQyODM1MjA3LCJpYXQiOjE3NDI3NDg4MDcsImp0aSI6ImRmYzg4Mzc0MWU5ZjQzODA5OWE5MDlhMmY1MzJjODE5IiwidXNlcl9pZCI6Nn0.A7ISPsz8wqecCFJk8FrYSAQdsEfPm0rQ0hXK4G7g_ug
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQzMDEwMTMyLCJpYXQiOjE3NDI5MjM3MzIsImp0aSI6Ijg5NmJkMDU2ZDcyMjQyYTQ4MzEwMjRhYjFlMTVkODUzIiwidXNlcl9pZCI6NX0.lSxzztQ8Bt23bd7cPDZ1DZZMm_SP63qW5lw0D-05GuY
 
  {
-    "name": "User4",
-    "age": 60,
-    "gender": "Male",
-    "contact_details": "9876543240",
+    "name": "User3",
+    "age": 32,
+    "gender": "Prefer not to say",
+    "contact_details": "9873442240",
     "chronic_conditions": "Arthritis, High Cholesterol",
     "past_surgeries": "Hip Replacement",
     "allergies": "Penicillin",
@@ -69,25 +69,25 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiY
     "emergency_contact": {
       "name": "Emma Green",
       "relationship": "Daughter",
-      "number": "4376543241"
+      "number": "4376543242"
     },
     "health_insurance_provider": "WellCare",
-    "health_insurance_policy": "MN123456",
-    "preferred_language": "English",
-    "research_participation": false
+    "health_insurance_policy": "MN123424",
+    "preferred_language": "Hindi",
+    "research_participation": true
   }
 ###
 
 GET http://127.0.0.1:8000/healthcare/form/me/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQyOTEzNDk5LCJpYXQiOjE3NDI4MjcwOTksImp0aSI6ImU2NGVjZWU3ODQwMjQwOWJiMjI1MDkwMDQ1NTVhYWI5IiwidXNlcl9pZCI6NX0.-tgEdPQygCRzoYHW0yNDBbjusvbgM7z4-HUuA4qPpr4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQzMDA3OTU1LCJpYXQiOjE3NDI5MjE1NTUsImp0aSI6IjFhOGNmY2M4ODgxMjQyYTc4MTFjNWRlMjdmMjg5ZDVjIiwidXNlcl9pZCI6M30.f0Z9loUE4Dxd6o1AsR0Fc4rmINPWWPlFSaFp8uNlmQ4
 
 
 ###
 
 PATCH http://127.0.0.1:8000/healthcare/form/me/update/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQyOTEzNDk5LCJpYXQiOjE3NDI4MjcwOTksImp0aSI6ImU2NGVjZWU3ODQwMjQwOWJiMjI1MDkwMDQ1NTVhYWI5IiwidXNlcl9pZCI6NX0.-tgEdPQygCRzoYHW0yNDBbjusvbgM7z4-HUuA4qPpr4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQzMDA3OTU1LCJpYXQiOjE3NDI5MjE1NTUsImp0aSI6IjFhOGNmY2M4ODgxMjQyYTc4MTFjNWRlMjdmMjg5ZDVjIiwidXNlcl9pZCI6M30.f0Z9loUE4Dxd6o1AsR0Fc4rmINPWWPlFSaFp8uNlmQ4
 
 {
     "name":"User1"

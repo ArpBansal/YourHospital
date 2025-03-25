@@ -13,6 +13,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from django.contrib.auth.models import AnonymousUser
 from channels.db import database_sync_to_async
 
+
 # Initialize Gemini API AFTER Django settings are ready
 API_KEY = getattr(settings, "GEMINI_API_KEY", None)
 
